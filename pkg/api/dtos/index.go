@@ -53,6 +53,7 @@ type NavLink struct {
 	Target       string     `json:"target,omitempty"`
 	SortWeight   int64      `json:"sortWeight,omitempty"`
 	Divider      bool       `json:"divider,omitempty"`
+	Redirect     bool       `json:"redirect,omitempty"`
 	HideFromMenu bool       `json:"hideFromMenu,omitempty"`
 	HideFromTabs bool       `json:"hideFromTabs,omitempty"`
 	Children     []*NavLink `json:"children,omitempty"`

@@ -13,10 +13,14 @@ const DropDownChild: FC<Props> = props => {
   const iconClassName = css`
     margin-right: ${theme.spacing.sm};
   `;
-
+  const redirect = () => {
+    if (child.redirect) {
+      window.location.href = child.url;
+    }
+  };
   return (
-    <li className={listItemClassName}>
-      <a href={child.url}>
+    <li className={listItemClassName} onClick={redirect}>
+      <a href={!child.redirect ? child.url : ''}>
         {child.icon && <Icon name={child.icon as IconName} className={iconClassName} />}
         {child.text}
       </a>

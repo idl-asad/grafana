@@ -157,6 +157,36 @@ func (hs *HTTPServer) setIndexViewData(c *models.ReqContext) (*dtos.IndexViewDat
 		})
 	}
 
+	// Custom-Clientbook
+	if c.OrgRole == m.ROLE_ADMIN || c.OrgRole == m.ROLE_EDITOR {
+		data.NavTree = append(data.NavTree, &dtos.NavLink{
+			Text:     "Clientbook",
+			Id:       "cb",
+			SubTitle: "Set up Data Pipeline",
+			Icon:     "fa fa-rocket",
+			Children: []*dtos.NavLink{
+				{
+					Text:     "Datasources",
+					Icon:     "gicon gicon-datasources",
+					Url:      setting.ConfigBaseUrl + "/datasources",
+					Redirect: true,
+				},
+				{
+					Text:     "Variables",
+					Icon:     "fa fa-superscript",
+					Url:      setting.ConfigBaseUrl + "/variables",
+					Redirect: true,
+				},
+				{
+					Text:     "Metrics",
+					Icon:     "fa fa-line-chart",
+					Url:      setting.ConfigBaseUrl + "/metrics",
+					Redirect: true,
+				},
+			},
+		})
+	}
+
 	if c.IsSignedIn {
 		// Only set login if it's different from the name
 		var login string
