@@ -110,6 +110,9 @@ var (
 	StrictTransportSecurityPreload    bool
 	StrictTransportSecuritySubDomains bool
 
+	//Custom Settings
+	ConfigBaseUrl string
+
 	// Snapshots
 	ExternalSnapshotUrl   string
 	ExternalSnapshotName  string
@@ -700,6 +703,9 @@ func (cfg *Cfg) Load(args *CommandLineArgs) error {
 	DataProxyLogging = dataproxy.Key("logging").MustBool(false)
 	DataProxyTimeout = dataproxy.Key("timeout").MustInt(30)
 	cfg.SendUserHeader = dataproxy.Key("send_user_header").MustBool(false)
+
+	// custom settings
+	ConfigBaseUrl = iniFile.Section("custom").Key("config_base_url").String()
 
 	// read security settings
 	security := iniFile.Section("security")
