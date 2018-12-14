@@ -15,7 +15,7 @@ const (
 	// Themes
 	lightName     = "light"
 	darkName      = "dark"
-	configBaseURL = "http://10.32.7.54:33300"
+	configBaseURL = "http://clientbook.ai.afiniti.com/v2/config-ui"
 )
 
 func setIndexViewData(c *m.ReqContext) (*dtos.IndexViewData, error) {
