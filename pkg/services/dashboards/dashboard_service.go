@@ -165,7 +165,7 @@ func (dr *dashboardServiceImpl) updateAlerting(cmd *models.SaveDashboardCommand,
 	}
 
 	if err := bus.Dispatch(&alertCmd); err != nil {
-		return models.ErrDashboardFailedToUpdateAlertData
+		return err
 	}
 
 	return nil
@@ -175,7 +175,9 @@ func (dr *dashboardServiceImpl) SaveProvisionedDashboard(dto *SaveDashboardDTO, 
 	dto.User = &models.SignedInUser{
 		UserId:  0,
 		OrgRole: models.ROLE_ADMIN,
+		OrgId:   dto.OrgId,
 	}
+
 	cmd, err := dr.buildSaveDashboardCommand(dto, true, false)
 	if err != nil {
 		return nil, err
