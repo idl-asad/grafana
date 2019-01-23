@@ -13,9 +13,8 @@ import (
 
 const (
 	// Themes
-	lightName     = "light"
-	darkName      = "dark"
-	configBaseURL = "http://10.32.7.54:33300"
+	lightName = "light"
+	darkName  = "dark"
 )
 
 func (hs *HTTPServer) setIndexViewData(c *m.ReqContext) (*dtos.IndexViewData, error) {
@@ -165,19 +164,19 @@ func (hs *HTTPServer) setIndexViewData(c *m.ReqContext) (*dtos.IndexViewData, er
 				{
 					Text:     "Datasources",
 					Icon:     "gicon gicon-datasources",
-					Url:      configBaseURL + "/datasources",
+					Url:      setting.ConfigBaseUrl + "/datasources",
 					Redirect: true,
 				},
 				{
 					Text:     "Variables",
 					Icon:     "fa fa-superscript",
-					Url:      configBaseURL + "/variables",
+					Url:      setting.ConfigBaseUrl + "/variables",
 					Redirect: true,
 				},
 				{
 					Text:     "Metrics",
 					Icon:     "fa fa-line-chart",
-					Url:      configBaseURL + "/metrics",
+					Url:      setting.ConfigBaseUrl + "/metrics",
 					Redirect: true,
 				},
 			},

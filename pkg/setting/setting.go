@@ -91,6 +91,9 @@ var (
 	DataProxyWhiteList               map[string]bool
 	DisableBruteForceLoginProtection bool
 
+	//Custom Settings
+	ConfigBaseUrl string
+
 	// Snapshots
 	ExternalSnapshotUrl   string
 	ExternalSnapshotName  string
@@ -580,6 +583,9 @@ func (cfg *Cfg) Load(args *CommandLineArgs) error {
 	// read data proxy settings
 	dataproxy := iniFile.Section("dataproxy")
 	DataProxyLogging = dataproxy.Key("logging").MustBool(false)
+
+	// custom settings
+	ConfigBaseUrl = iniFile.Section("custom").Key("config_base_url").String()
 
 	// read security settings
 	security := iniFile.Section("security")
