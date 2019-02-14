@@ -9,23 +9,6 @@
   font-style: normal;
 }
 
-.icon-gf {
-  /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'grafana-icons' !important;
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-  display: inline-block;
-  vertical-align: middle;
-
-  /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 .icon-gf-fw {
   width: 1.2857142857em;
   text-align: center;
@@ -56,12 +39,55 @@
 }
 .icon-gf-panel:before {
   content: '\e904';
+<<<<<<< HEAD
 }
 .icon-gf-endpoint-tiny:before {
   content: '\e608';
 }
 .icon-gf-critical:before {
   content: '\e610';
+=======
+}
+.icon-gf-datasources:before {
+  content: '\e607';
+}
+.icon-gf-endpoint-tiny:before {
+  content: '\e608';
+}
+.icon-gf-endpoint:before {
+  content: '\e609';
+}
+.icon-gf-page:before {
+  content: '\e908';
+}
+.icon-gf-filter:before {
+  content: '\e60a';
+}
+.icon-gf-status:before {
+  content: '\e60b';
+}
+.icon-gf-monitoring:before {
+  content: '\e60c';
+}
+.icon-gf-monitoring-tiny:before {
+  content: '\e620';
+}
+.icon-gf-jump-to-dashboard:before {
+  content: '\e60d';
+}
+.icon-gf-warn,
+.icon-gf-warning:before {
+  content: '\e60e';
+}
+.icon-gf-nodata:before {
+  content: '\e60f';
+}
+.icon-gf-critical:before {
+  content: '\e610';
+}
+.icon-gf-crit:before {
+  content: '\e610';
+>>>>>>> 820368c... * changed grafana logo to client
 }
 .icon-gf-online:before {
   content: '\e611';
@@ -146,4 +172,19 @@
 }
 .icon-gf-apps:before {
   content: '\e902';
+<<<<<<< HEAD
+=======
+}
+.icon-gf-scale:before {
+  content: '\e906';
+}
+.icon-gf-pending:before {
+  content: '\e909';
+}
+.icon-gf-verified:before {
+  content: '\e90a';
+}
+.icon-gf-worldping:before {
+  content: '\e627';
+>>>>>>> 820368c... * changed grafana logo to client
 }
