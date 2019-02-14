@@ -87,7 +87,7 @@ func (hs *HTTPServer) setIndexViewData(c *models.ReqContext) (*dtos.IndexViewDat
 		AppNameBodyClass:        getAppNameBodyClass(hs.License.HasValidLicense()),
 		FavIcon:                 "public/img/fav32.png",
 		AppleTouchIcon:          "public/img/apple-touch-icon.png",
-		AppTitle:                "Grafana",
+		AppTitle:                "Clientbook",
 	}
 
 	if setting.DisableGravatar {
@@ -160,10 +160,10 @@ func (hs *HTTPServer) setIndexViewData(c *models.ReqContext) (*dtos.IndexViewDat
 	// Custom-Clientbook
 	if c.OrgRole == models.ROLE_ADMIN || c.OrgRole == models.ROLE_EDITOR {
 		data.NavTree = append(data.NavTree, &dtos.NavLink{
-			Text:     "Clientbook",
+			Text:     "Configuration",
 			Id:       "cb",
 			SubTitle: "Set up Data Pipeline",
-			Icon:     "fa fa-rocket",
+			Icon:     "fa fa-sitemap",
 			Children: []*dtos.NavLink{
 				{
 					Text:     "Datasources",

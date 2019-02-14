@@ -13,7 +13,7 @@ export const LoginLogo: FC<BrandComponentProps> = ({ className }) => {
 
   return (
     <>
-      <img className={cx(className, maxSize)} src="public/img/grafana_icon.svg" alt="Grafana" />
+      <img className={cx(className, maxSize)} src="public/img/cb-logo.png" alt="Grafana" />
       <div className="logo-wordmark" />
     </>
   );
@@ -29,10 +29,10 @@ export const LoginBackground: FC<BrandComponentProps> = ({ className, children }
 };
 
 export const MenuLogo: FC<BrandComponentProps> = ({ className }) => {
-  return <img className={className} src="public/img/grafana_icon.svg" alt="Grafana" />;
+  return <img className={className} src="public/img/cb-logo.png" alt="Grafana" />;
 };
 
-export const AppTitle = 'Grafana';
+export const AppTitle = 'Clientbook';
 
 export class Branding {
   static LoginLogo = LoginLogo;
