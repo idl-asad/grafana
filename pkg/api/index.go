@@ -156,10 +156,10 @@ func (hs *HTTPServer) setIndexViewData(c *m.ReqContext) (*dtos.IndexViewData, er
 	// Custom-Clientbook
 	if c.OrgRole == m.ROLE_ADMIN || c.OrgRole == m.ROLE_EDITOR {
 		data.NavTree = append(data.NavTree, &dtos.NavLink{
-			Text:     "Clientbook",
+			Text:     "Configuration",
 			Id:       "cb",
 			SubTitle: "Set up Data Pipeline",
-			Icon:     "fa fa-rocket",
+			Icon:     "fa fa-sitemap",
 			Children: []*dtos.NavLink{
 				{
 					Text:     "Datasources",
