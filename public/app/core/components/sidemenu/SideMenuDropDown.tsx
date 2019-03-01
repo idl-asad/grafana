@@ -14,12 +14,15 @@ const SideMenuDropDown: FC<Props> = props => {
     childrenLinks = _.filter(link.children, item => !item.hideFromMenu);
   }
 
+  const redirect = () => {
+    if (link.redirect) {
+      window.location.href = link.url;
+    }
+  };
   return (
     <ul className="dropdown-menu dropdown-menu--sidemenu" role="menu">
-      <li className="side-menu-header">
-        <a className="side-menu-header-link" href={link.url}>
-          <span className="sidemenu-item-text">{link.text}</span>
-        </a>
+      <li className="side-menu-header" onClick={redirect}>
+        <span className="sidemenu-item-text">{link.text}</span>
       </li>
       {childrenLinks.map((child, index) => {
         return <DropDownChild child={child} key={`${child.url}-${index}`} />;

@@ -239,6 +239,17 @@ func (hs *HTTPServer) setIndexViewData(c *models.ReqContext) (*dtos.IndexViewDat
 		})
 	}
 
+	if c.OrgRole == m.ROLE_ADMIN || c.OrgRole == m.ROLE_EDITOR {
+		data.NavTree = append(data.NavTree, &dtos.NavLink{
+			Text:     "Documentation",
+			Id:       "cb",
+			SubTitle: "Set up Data Pipeline",
+			Icon:     "fa fa-file",
+			Url:      setting.CbDocumentationUrl,
+			Redirect: true,
+		})
+	}
+
 	enabledPlugins, err := plugins.GetEnabledPlugins(c.OrgId)
 	if err != nil {
 		return nil, err
