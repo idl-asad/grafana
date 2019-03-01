@@ -92,7 +92,8 @@ var (
 	DisableBruteForceLoginProtection bool
 
 	//Custom Settings
-	ConfigBaseUrl string
+	ConfigBaseUrl      string
+	CbDocumentationUrl string
 
 	// Snapshots
 	ExternalSnapshotUrl   string
@@ -588,6 +589,7 @@ func (cfg *Cfg) Load(args *CommandLineArgs) error {
 
 	// custom settings
 	ConfigBaseUrl = iniFile.Section("custom").Key("config_base_url").String()
+	CbDocumentationUrl = iniFile.Section("custom").Key("cb_documentation_url").String()
 
 	// read security settings
 	security := iniFile.Section("security")

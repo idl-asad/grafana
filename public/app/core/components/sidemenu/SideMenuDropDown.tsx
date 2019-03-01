@@ -7,9 +7,14 @@ interface Props {
 
 const SideMenuDropDown: SFC<Props> = props => {
   const { link } = props;
+  const redirect = () => {
+    if (link.redirect) {
+      window.location.href = link.url;
+    }
+  };
   return (
     <ul className="dropdown-menu dropdown-menu--sidemenu" role="menu">
-      <li className="side-menu-header">
+      <li className="side-menu-header" onClick={redirect}>
         <span className="sidemenu-item-text">{link.text}</span>
       </li>
       {link.children &&
