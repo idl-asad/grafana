@@ -10,6 +10,11 @@ interface Props {
 
 const SideMenuDropDown: FC<Props> = props => {
   const { link, onHeaderClick } = props;
+  const redirect = () => {
+    if (link.redirect) {
+      window.location.href = link.url;
+    }
+  };
   let childrenLinks: NavModelItem[] = [];
   if (link.children) {
     childrenLinks = _.filter(link.children, item => !item.hideFromMenu);
@@ -17,7 +22,7 @@ const SideMenuDropDown: FC<Props> = props => {
 
   return (
     <ul className="dropdown-menu dropdown-menu--sidemenu" role="menu">
-      <li className="side-menu-header">
+      <li className="side-menu-header" onClick={redirect}>
         <a className="side-menu-header-link" href={link.url} onClick={onHeaderClick}>
           <span className="sidemenu-item-text">{link.text}</span>
         </a>
