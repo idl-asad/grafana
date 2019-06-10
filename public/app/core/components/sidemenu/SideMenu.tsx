@@ -2,9 +2,6 @@ import React, { PureComponent } from 'react';
 import appEvents from '../../app_events';
 import TopSection from './TopSection';
 import BottomSection from './BottomSection';
-import config from 'app/core/config';
-
-const homeUrl = config.appSubUrl || '/';
 
 export class SideMenu extends PureComponent {
   toggleSideMenuSmallBreakpoint = () => {
@@ -13,7 +10,7 @@ export class SideMenu extends PureComponent {
 
   render() {
     return [
-      <div className="sidemenu__logo" onClick={this.toggleSideMenu} key="logo">
+      <div className="sidemenu__logo" key="logo">
         <img src="public/img/cb-logo.png" alt="Grafana" />
       </div>,
       <div className="sidemenu__logo_small_breakpoint" onClick={this.toggleSideMenuSmallBreakpoint} key="hamburger">
