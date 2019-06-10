@@ -158,7 +158,7 @@ func (hs *HTTPServer) setIndexViewData(c *models.ReqContext) (*dtos.IndexViewDat
 	}
 
 	// Custom-Clientbook
-	if c.OrgRole == m.ROLE_ADMIN || c.OrgRole == m.ROLE_EDITOR {
+	if (c.OrgRole == m.ROLE_ADMIN || c.OrgRole == m.ROLE_EDITOR) && setting.ConfigBaseUrl != "" {
 		data.NavTree = append(data.NavTree, &dtos.NavLink{
 			Text:     "Configuration",
 			Id:       "cb",
@@ -239,7 +239,7 @@ func (hs *HTTPServer) setIndexViewData(c *models.ReqContext) (*dtos.IndexViewDat
 		})
 	}
 
-	if c.OrgRole == m.ROLE_ADMIN || c.OrgRole == m.ROLE_EDITOR {
+	if (c.OrgRole == m.ROLE_ADMIN || c.OrgRole == m.ROLE_EDITOR) && setting.CbDocumentationUrl != "" {
 		data.NavTree = append(data.NavTree, &dtos.NavLink{
 			Text:     "Documentation",
 			Id:       "cb",
