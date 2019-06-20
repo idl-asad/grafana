@@ -359,8 +359,27 @@ class GraphElement {
         break;
       }
       case 'table': {
-        options.series.bars.barWidth = 0.7;
+        options.series.bars.barWidth = 0.1;
         options.series.bars.align = 'center';
+        const stringVals = [];
+        this.data.forEach(seriesData => {
+          seriesData.data = seriesData.datapoints.map((point, index) => {
+            if (typeof point[1] === 'string') {
+              // Assigning -axis tick index to every y-axis value
+              let tickIndex = 0;
+              if (stringVals.indexOf(point[1]) !== -1) {
+                tickIndex = stringVals.indexOf(point[1]) + 1;
+              } else {
+                stringVals.push(point[1]);
+                tickIndex = stringVals.length;
+              }
+              return [tickIndex, point[0]];
+            } else {
+              return [point[1], point[0]];
+            }
+          });
+        });
+
         this.addXTableAxis(options);
         break;
       }
@@ -568,23 +587,29 @@ class GraphElement {
   }
 
   addXTableAxis(options) {
-    let ticks = _.map(this.data, (series, seriesIndex) => {
-      return _.map(series.datapoints, (point, pointIndex) => {
-        const tickIndex = seriesIndex * series.datapoints.length + pointIndex;
-        return [tickIndex + 1, point[1]];
+    const ticks = [];
+    const uniqueTickVal = {};
+    let maxValue = 0;
+    if (this.data.length && this.data[0].datapoints.length) {
+      this.data[0].datapoints.forEach(val => {
+        if (typeof val[1] === 'string') {
+          if (!uniqueTickVal[val[1]]) {
+            ticks.push([ticks.length + 1, val[1]]);
+            uniqueTickVal[val[1]] = true;
+          }
+        } else if (val[1] > maxValue) {
+          maxValue = val[1];
+        }
       });
-    });
-    // @ts-ignore, potential bug? is this _.flattenDeep?
-    ticks = _.flatten(ticks, true);
-
+    }
     options.xaxis = {
       timezone: this.dashboard.getTimezone(),
       show: this.panel.xaxis.show,
       mode: null,
       min: 0,
-      max: ticks.length + 1,
-      label: 'Datetime',
-      ticks: ticks,
+      max: ticks.length ? ticks.length + 1 : maxValue,
+      label: this.panel.xaxis.name,
+      ticks: ticks.length ? ticks : this.panelWidth / 100,
     };
   }
 

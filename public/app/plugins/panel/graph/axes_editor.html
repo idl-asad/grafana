@@ -46,15 +46,35 @@
 
 	<div class="section gf-form-group">
 		<h5 class="section-heading">X-Axis</h5>
-		<gf-form-switch class="gf-form" label="Show" label-class="width-6" checked="ctrl.panel.xaxis.show" on-change="ctrl.render()"></gf-form-switch>
+		<gf-form-switch class="gf-form" label="Show" label-class="width-9" checked="ctrl.panel.xaxis.show" on-change="ctrl.render()"></gf-form-switch>
 
 		<div class="gf-form">
-			<label class="gf-form-label width-6">Mode</label>
+			<label class="gf-form-label width-9">Mode</label>
 			<div class="gf-form-select-wrapper max-width-15">
 				<select class="gf-form-input" ng-model="ctrl.panel.xaxis.mode" ng-options="v as k for (k, v) in ctrl.xAxisModes" ng-change="ctrl.xAxisModeChanged()"> </select>
 			</div>
 		</div>
-
+		<div class="gf-form" ng-if="ctrl.panel.xaxis.mode === 'table'">
+			<label class="gf-form-label width-9">Field Name
+				<info-popover mode="right-normal" position="top center" style="padding: 0%">
+					Specify column name to plot on x-axis
+				  </info-popover>
+			</label>
+			<input type="text" class="gf-form-input max-width-15" ng-model="ctrl.panel.xaxis.name" placeholder="auto" ng-change="ctrl.render()" ng-model-onblur data-placement="right">
+		</div>
+		<div  class="gf-form" ng-if="ctrl.panel.xaxis.mode === 'table'">
+			<label class="gf-form-label width-9">Data Type</label>
+			<div class="gf-form-select-wrapper max-width-15">
+				<select class="gf-form-input" ng-model="ctrl.panel.xaxis.xaxisDataType" ng-options="v as k for (k, v) in ctrl.xAxisDataType"> </select>
+			</div>
+		</div>
+		<!-- <div class="gf-form">
+			<label class="gf-form-label width-6">Y-axis Columns</label>
+			<div class="gf-form-select-wrapper max-width-15">
+				<select class="gf-form-input" ng-model="ctrl.panel.yAxesColumns" ng-options="col as col for col in ctrl.yAxisOptions" ng-change="ctrl.xAxisModeChanged()"> </select>
+			</div>
+		</div> -->
+		
 		<!-- Series mode -->
 		<div class="gf-form" ng-if="ctrl.panel.xaxis.mode === 'series'">
 			<label class="gf-form-label width-6">Value</label>
@@ -87,6 +107,20 @@
 					Level
 				</label>
 				<input type="number" class="gf-form-input width-5" placeholder="0" ng-model="ctrl.panel.yaxis.alignLevel" ng-change="ctrl.render()" ng-model-onblur bs-tooltip="'Alignment of Y-axes are based on this value, starting from Y=0'" data-placement="right">
+			</div>
+			<div class="gf-form" ng-if="ctrl.panel.xaxis.mode === 'table'">
+				<label class="gf-form-label width-9">Y-axis
+					<info-popover mode="right-normal" position="top center" style="padding: 0%">
+						Specify comma separated column names (col1,col2) to plot on y-axis
+					  </info-popover>
+				</label>
+				<input type="text" class="gf-form-input max-width-15" ng-model="ctrl.panel.xaxis.yAxesColumns" placeholder="col(1),col(2)" ng-blur="ctrl.render()" ng-model-onblur data-placement="right">
+			</div>
+			<div  class="gf-form" ng-if="ctrl.panel.xaxis.mode === 'table'">
+				<label class="gf-form-label width-9">Aggregation</label>
+				<div class="gf-form-select-wrapper max-width-15">
+					<select class="gf-form-input" ng-model="ctrl.panel.aggregationType" ng-options="opt.value as opt.text for opt in ctrl.aggregationOptions"> </select>
+				</div>
 			</div>
 		</div>
 

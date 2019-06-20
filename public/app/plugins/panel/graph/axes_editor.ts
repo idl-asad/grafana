@@ -7,7 +7,9 @@ export class AxesEditorCtrl {
   logScales: any;
   xAxisModes: any;
   xAxisStatOptions: any;
+  aggregationOptions: any;
   xNameSegment: any;
+  xAxisDataType: any;
 
   /** @ngInject */
   constructor(private $scope, private $q) {
@@ -29,7 +31,12 @@ export class AxesEditorCtrl {
       Time: 'time',
       Series: 'series',
       Histogram: 'histogram',
-      // 'Data field': 'field',
+      'Select-Series': 'table',
+    };
+
+    this.xAxisDataType = {
+      Integer: 'number',
+      String: 'string',
     };
 
     this.xAxisStatOptions = [
@@ -39,6 +46,15 @@ export class AxesEditorCtrl {
       { text: 'Total', value: 'total' },
       { text: 'Count', value: 'count' },
       { text: 'Current', value: 'current' },
+    ];
+
+    this.aggregationOptions = [
+      { text: 'None', value: 'none' },
+      { text: 'Avg', value: 'avg' },
+      { text: 'Min', value: 'min' },
+      { text: 'Max', value: 'max' },
+      { text: 'Total', value: 'total' },
+      { text: 'Count', value: 'count' },
     ];
 
     if (this.panel.xaxis.mode === 'custom') {

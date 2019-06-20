@@ -52,12 +52,13 @@ class GraphCtrl extends MetricsPanelCtrl {
         format: 'short',
       },
     ],
+    aggregationType: 'none',
     xaxis: {
       show: true,
-      mode: 'time',
       name: null,
       values: [],
       buckets: null,
+      xaxisDataType: 'number',
     },
     yaxis: {
       align: false,

@@ -10,7 +10,9 @@ type Options = {
 };
 
 export class DataProcessor {
-  constructor(private panel) {}
+  constructor(private panel) {
+    console.log(this.panel);
+  }
 
   getSeriesList(options: Options): TimeSeries[] {
     if (!options.dataList || options.dataList.length === 0) {
@@ -51,8 +53,8 @@ export class DataProcessor {
           return this.timeSeriesHandler(item, index, options);
         });
       }
-      case 'field': {
-        return this.customHandler(firstItem);
+      case 'table': {
+        return this.customHandler(options.dataList[0]);
       }
     }
 
@@ -62,9 +64,9 @@ export class DataProcessor {
   getAutoDetectXAxisMode(firstItem) {
     switch (firstItem.type) {
       case 'docs':
-        return 'field';
+        return 'table';
       case 'table':
-        return 'field';
+        return 'table';
       default: {
         if (this.panel.xaxis.mode === 'series') {
           return 'series';
@@ -107,6 +109,15 @@ export class DataProcessor {
         this.panel.tooltip.shared = false;
         break;
       }
+      case 'table': {
+        this.panel.bars = false;
+        this.panel.lines = true;
+        this.panel.points = false;
+        this.panel.legend.show = true;
+        this.panel.tooltip.shared = true;
+        this.panel.xaxis.values = ['total'];
+        break;
+      }
     }
   }
 
@@ -138,13 +149,140 @@ export class DataProcessor {
   }
 
   customHandler(dataItem) {
+    let xaxisFieldIndex = -1;
+    let seriesData;
+    const series = [];
     const nameField = this.panel.xaxis.name;
+    const xAxisDataType = this.panel.xaxis.xaxisDataType;
+    const yAxisColumns = this.panel.xaxis.yAxesColumns.replace(/ /g, '').split(',');
+
     if (!nameField) {
       throw {
-        message: 'No field name specified to use for x-axis, check your axes settings',
+        message: 'No column specified to use for x-axis, check your axes settings',
       };
     }
-    return [];
+
+    if (!yAxisColumns[0]) {
+      throw {
+        message: 'No column specified to use for y-axis, check your axes settings',
+      };
+    }
+
+    yAxisColumns.forEach(col => {
+      if (!this.validateAxisColumns(col, dataItem.columns)) {
+        throw {
+          message: 'Column specified to use for y-axis, does not exist',
+        };
+      }
+    });
+
+    if (!this.validateAxisColumns(nameField, dataItem.columns)) {
+      throw {
+        message: 'Column specified to use for x-axis, does not exist',
+      };
+    }
+
+    dataItem.columns.forEach((item, index) => {
+      if (item.text === nameField) {
+        xaxisFieldIndex = index;
+      }
+    });
+
+    if (xAxisDataType !== typeof dataItem.rows[0][xaxisFieldIndex]) {
+      dataItem.rows = this.castDataType(dataItem.rows, xaxisFieldIndex, xAxisDataType);
+    }
+
+    dataItem.columns.forEach((col, index) => {
+      if (yAxisColumns.indexOf(col.text) !== -1) {
+        seriesData = dataItem.rows.map(row => {
+          return [row[index], row[xaxisFieldIndex]];
+        });
+        const alias = dataItem.columns[index].text;
+        const colorIndex = index % colors.length;
+        const color = this.panel.aliasColors[alias] || colors[colorIndex];
+        if (this.panel.aggregationType !== 'none' && typeof dataItem.rows[0][1] === 'number') {
+          seriesData = this.aggregateData(seriesData);
+        }
+        series.push(
+          new TimeSeries({
+            datapoints: seriesData,
+            alias: alias,
+            color: color,
+          })
+        );
+      }
+    });
+    return series;
+  }
+
+  validateAxisColumns(name, columnList): boolean {
+    let isFound = false;
+    columnList.forEach(col => {
+      if (col.text === name) {
+        isFound = true;
+      }
+    });
+    return isFound;
+  }
+
+  aggregateData(data) {
+    const aggregatedSeriesData = [];
+    const uniqueData = new Object();
+    data.forEach(arr => {
+      if (!uniqueData[arr[1]]) {
+        uniqueData[arr[1]] = new Object();
+        uniqueData[arr[1]]['values'] = new Array();
+      }
+      uniqueData[arr[1]]['values'].push(arr[0]);
+    });
+    const keys = Object.keys(uniqueData);
+    for (let i = 0; i < keys.length; i++) {
+      switch (this.panel.aggregationType) {
+        case 'avg':
+          uniqueData[keys[i]]['avg'] = _.meanBy(uniqueData[keys[i]].values);
+          break;
+        case 'min':
+          uniqueData[keys[i]]['min'] = _.min(uniqueData[keys[i]].values);
+          break;
+        case 'max':
+          uniqueData[keys[i]]['max'] = _.max(uniqueData[keys[i]].values);
+          break;
+        case 'total':
+          uniqueData[keys[i]]['total'] = _.sum(uniqueData[keys[i]].values);
+          break;
+        case 'count':
+          uniqueData[keys[i]]['count'] = uniqueData[keys[i]].values.length;
+          break;
+        case 'current':
+          uniqueData[keys[i]]['count'] = uniqueData[keys[i]].values.length;
+          break;
+      }
+    }
+    for (let i = 0; i < keys.length; i++) {
+      const keyVal = isNaN(parseInt(keys[i], 10)) ? keys[i] : parseInt(keys[i], 10);
+      aggregatedSeriesData.push([uniqueData[keys[i]][this.panel.aggregationType], keyVal]);
+    }
+    return aggregatedSeriesData;
+  }
+
+  castDataType(data, xaxisFieldIndex, xaxisxAxisDataType) {
+    if (xaxisxAxisDataType === 'number') {
+      data.forEach(item => {
+        item[xaxisFieldIndex] = parseInt(item[xaxisFieldIndex], 10);
+      });
+    } else {
+      data.forEach(item => {
+        item[xaxisFieldIndex] = item[xaxisFieldIndex].toString();
+      });
+    }
+    data.sort((a, b) => {
+      // tslint:disable-next-line:curly
+      if (a[xaxisFieldIndex] < b[xaxisFieldIndex]) return -1;
+      // tslint:disable-next-line:curly
+      if (a[xaxisFieldIndex] > b[xaxisFieldIndex]) return 1;
+      return 0;
+    });
+    return data;
   }
 
   validateXAxisSeriesValue() {
