@@ -1,9 +1,7 @@
 import 'vendor/flot/jquery.flot';
 import $ from 'jquery';
 import _ from 'lodash';
-import { getColorFromHexRgbOrName } from '@grafana/data';
-import { CoreEvents } from 'app/types';
-import { PanelCtrl } from 'app/features/panel/panel_ctrl';
+import { getColorFromHexRgbOrName } from '@grafana/ui';
 
 export class ThresholdManager {
   plot: any;
@@ -13,9 +11,9 @@ export class ThresholdManager {
   needsCleanup: boolean;
   hasSecondYAxis: any;
 
-  constructor(private panelCtrl: PanelCtrl) {}
+  constructor(private panelCtrl) {}
 
-  getHandleHtml(handleIndex: any, model: { colorMode: string }, valueStr: any) {
+  getHandleHtml(handleIndex, model, valueStr) {
     let stateClass = model.colorMode;
     if (model.colorMode === 'custom') {
       stateClass = 'critical';
@@ -32,17 +30,17 @@ export class ThresholdManager {
     </div>`;
   }
 
-  initDragging(evt: any) {
+  initDragging(evt) {
     const handleElem = $(evt.currentTarget).parents('.alert-handle-wrapper');
     const handleIndex = $(evt.currentTarget).data('handleIndex');
 
-    let lastY: number | null = null;
-    let posTop: number;
+    let lastY = null;
+    let posTop;
     const plot = this.plot;
     const panelCtrl = this.panelCtrl;
     const model = this.thresholds[handleIndex];
 
-    function dragging(evt: any) {
+    function dragging(evt) {
       if (lastY === null) {
         lastY = evt.clientY;
       } else {
@@ -60,12 +58,13 @@ export class ThresholdManager {
       model.value = graphValue;
 
       handleElem.off('mousemove', dragging);
-      document.removeEventListener('mouseup', stopped);
+      handleElem.off('mouseup', dragging);
+      handleElem.off('mouseleave', dragging);
 
       // trigger digest and render
       panelCtrl.$scope.$apply(() => {
         panelCtrl.render();
-        panelCtrl.events.emit(CoreEvents.thresholdChanged, {
+        panelCtrl.events.emit('threshold-changed', {
           threshold: model,
           handleIndex: handleIndex,
         });
@@ -76,7 +75,8 @@ export class ThresholdManager {
     posTop = handleElem.position().top;
 
     handleElem.on('mousemove', dragging);
-    document.addEventListener('mouseup', stopped);
+    handleElem.on('mouseup', stopped);
+    handleElem.on('mouseleave', stopped);
   }
 
   cleanUp() {
@@ -84,7 +84,7 @@ export class ThresholdManager {
     this.needsCleanup = false;
   }
 
-  renderHandle(handleIndex: number, defaultHandleTopPos: number) {
+  renderHandle(handleIndex, defaultHandleTopPos) {
     const model = this.thresholds[handleIndex];
     const value = model.value;
     let valueStr = value;
@@ -107,11 +107,10 @@ export class ThresholdManager {
   }
 
   shouldDrawHandles() {
-    // @ts-ignore
     return !this.hasSecondYAxis && this.panelCtrl.editingThresholds && this.panelCtrl.panel.thresholds.length > 0;
   }
 
-  prepare(elem: JQuery, data: any[]) {
+  prepare(elem, data) {
     this.hasSecondYAxis = false;
     for (let i = 0; i < data.length; i++) {
       if (data[i].yaxis > 1) {
@@ -128,7 +127,7 @@ export class ThresholdManager {
     }
   }
 
-  draw(plot: any) {
+  draw(plot) {
     this.thresholds = this.panelCtrl.panel.thresholds;
     this.plot = plot;
     this.placeholder = plot.getPlaceholder();
@@ -155,7 +154,7 @@ export class ThresholdManager {
     this.needsCleanup = true;
   }
 
-  addFlotOptions(options: any, panel: any) {
+  addFlotOptions(options, panel) {
     if (!panel.thresholds || panel.thresholds.length === 0) {
       return;
     }

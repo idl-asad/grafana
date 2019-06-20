@@ -1,13 +1,14 @@
 import 'vendor/flot/jquery.flot';
 import _ from 'lodash';
-import { GrafanaThemeType, getColorFromHexRgbOrName, dateTime, DateTime, AbsoluteTimeRange } from '@grafana/data';
+import moment from 'moment';
+import { GrafanaThemeType, getColorFromHexRgbOrName } from '@grafana/ui';
 
 type TimeRegionColorDefinition = {
-  fill: string | null;
-  line: string | null;
+  fill: string;
+  line: string;
 };
 
-export const colorModes: any = {
+export const colorModes = {
   gray: {
     themeDependent: true,
     title: 'Gray',
@@ -36,13 +37,13 @@ export const colorModes: any = {
 export function getColorModes() {
   return _.map(Object.keys(colorModes), key => {
     return {
-      key,
+      key: key,
       value: colorModes[key].title,
     };
   });
 }
 
-function getColor(timeRegion: any, theme: GrafanaThemeType): TimeRegionColorDefinition {
+function getColor(timeRegion, theme: GrafanaThemeType): TimeRegionColorDefinition {
   if (Object.keys(colorModes).indexOf(timeRegion.colorMode) === -1) {
     timeRegion.colorMode = 'red';
   }
@@ -70,32 +71,23 @@ export class TimeRegionManager {
   plot: any;
   timeRegions: any;
 
-  constructor(private panelCtrl: any, private theme: GrafanaThemeType = GrafanaThemeType.Dark) {}
+  constructor(private panelCtrl, private theme: GrafanaThemeType = GrafanaThemeType.Dark) {}
 
-  draw(plot: any) {
+  draw(plot) {
     this.timeRegions = this.panelCtrl.panel.timeRegions;
     this.plot = plot;
   }
 
-  addFlotOptions(options: any, panel: any) {
+  addFlotOptions(options, panel) {
     if (!panel.timeRegions || panel.timeRegions.length === 0) {
       return;
     }
 
-    const tRange = {
-      from: dateTime(this.panelCtrl.range.from).utc(),
-      to: dateTime(this.panelCtrl.range.to).utc(),
-    };
+    const tRange = { from: moment(this.panelCtrl.range.from).utc(), to: moment(this.panelCtrl.range.to).utc() };
 
-    let i: number,
-      hRange: { from: any; to: any },
-      timeRegion: any,
-      regions: AbsoluteTimeRange[],
-      fromStart: DateTime,
-      fromEnd: DateTime,
-      timeRegionColor: TimeRegionColorDefinition;
+    let i, hRange, timeRegion, regions, fromStart, fromEnd, timeRegionColor: TimeRegionColorDefinition;
 
-    const timeRegionsCopy = panel.timeRegions.map((a: any) => ({ ...a }));
+    const timeRegionsCopy = panel.timeRegions.map(a => ({ ...a }));
 
     for (i = 0; i < timeRegionsCopy.length; i++) {
       timeRegion = timeRegionsCopy[i];
@@ -151,7 +143,7 @@ export class TimeRegionManager {
 
       regions = [];
 
-      fromStart = dateTime(tRange.from);
+      fromStart = moment(tRange.from);
       fromStart.set('hour', 0);
       fromStart.set('minute', 0);
       fromStart.set('second', 0);
@@ -168,21 +160,19 @@ export class TimeRegionManager {
           break;
         }
 
-        fromEnd = dateTime(fromStart);
+        fromEnd = moment(fromStart);
 
-        if (fromEnd.hour) {
-          if (hRange.from.h <= hRange.to.h) {
-            fromEnd.add(hRange.to.h - hRange.from.h, 'hours');
-          } else if (hRange.from.h > hRange.to.h) {
-            while (fromEnd.hour() !== hRange.to.h) {
-              fromEnd.add(1, 'hours');
-            }
-          } else {
-            fromEnd.add(24 - hRange.from.h, 'hours');
+        if (hRange.from.h <= hRange.to.h) {
+          fromEnd.add(hRange.to.h - hRange.from.h, 'hours');
+        } else if (hRange.from.h > hRange.to.h) {
+          while (fromEnd.hour() !== hRange.to.h) {
+            fromEnd.add(1, 'hours');
+          }
+        } else {
+          fromEnd.add(24 - hRange.from.h, 'hours');
 
-            while (fromEnd.hour() !== hRange.to.h) {
-              fromEnd.add(1, 'hours');
-            }
+          while (fromEnd.hour() !== hRange.to.h) {
+            fromEnd.add(1, 'hours');
           }
         }
 
@@ -229,9 +219,9 @@ export class TimeRegionManager {
     }
   }
 
-  parseTimeRange(str: string) {
+  parseTimeRange(str) {
     const timeRegex = /^([\d]+):?(\d{2})?/;
-    const result: any = { h: null, m: null };
+    const result = { h: null, m: null };
     const match = timeRegex.exec(str);
 
     if (!match) {

@@ -1,12 +1,10 @@
 import angular from 'angular';
 import $ from 'jquery';
 import _ from 'lodash';
-//@ts-ignore
 import Drop from 'tether-drop';
-import { CreatePlotOverlay } from '@grafana/data';
 
 /** @ngInject */
-const createAnnotationToolip: CreatePlotOverlay = (element, event, plot) => {
+export function createAnnotationToolip(element, event, plot) {
   const injector = angular.element(document).injector();
   const content = document.createElement('div');
   content.innerHTML = '<annotation-tooltip event="event" on-edit="onEdit()"></annotation-tooltip>';
@@ -47,12 +45,12 @@ const createAnnotationToolip: CreatePlotOverlay = (element, event, plot) => {
       });
     },
   ]);
-};
+}
 
-let markerElementToAttachTo: any = null;
+let markerElementToAttachTo = null;
 
 /** @ngInject */
-const createEditPopover: CreatePlotOverlay = (element, event, plot) => {
+export function createEditPopover(element, event, plot) {
   const eventManager = plot.getOptions().events.manager;
   if (eventManager.editorOpen) {
     // update marker element to attach to (needed in case of legend on the right
@@ -77,7 +75,7 @@ const createEditPopover: CreatePlotOverlay = (element, event, plot) => {
       '$rootScope',
       ($compile, $rootScope) => {
         const scope = $rootScope.$new(true);
-        let drop: any;
+        let drop;
 
         scope.event = event;
         scope.panelCtrl = eventManager.panelCtrl;
@@ -113,9 +111,7 @@ const createEditPopover: CreatePlotOverlay = (element, event, plot) => {
       },
     ]);
   }, 100);
-};
-
-export { createEditPopover, createAnnotationToolip };
+}
 
 /*
  * jquery.flot.events
@@ -145,21 +141,12 @@ export class DrawableEvent {
   _height: any;
 
   /** @ngInject */
-  constructor(
-    object: JQuery,
-    drawFunc: any,
-    clearFunc: any,
-    moveFunc: any,
-    left: number,
-    top: number,
-    width: number,
-    height: number
-  ) {
+  constructor(object, drawFunc, clearFunc, moveFunc, left, top, width, height) {
     this._object = object;
     this._drawFunc = drawFunc;
     this._clearFunc = clearFunc;
     this._moveFunc = moveFunc;
-    this._position = { left, top };
+    this._position = { left: left, top: top };
     this._width = width;
     this._height = height;
   }
@@ -182,7 +169,7 @@ export class DrawableEvent {
   getObject() {
     return this._object;
   }
-  moveTo(position: { left: number; top: number }) {
+  moveTo(position) {
     this._position = position;
     this._moveFunc(this._object, this._position);
   }
@@ -198,7 +185,7 @@ export class VisualEvent {
   _hidden: any;
 
   /** @ngInject */
-  constructor(options: any, drawableEvent: DrawableEvent) {
+  constructor(options, drawableEvent) {
     this._options = options;
     this._drawableEvent = drawableEvent;
     this._hidden = false;
@@ -234,7 +221,7 @@ export class EventMarkers {
   eventsEnabled: any;
 
   /** @ngInject */
-  constructor(plot: any) {
+  constructor(plot) {
     this._events = [];
     this._types = [];
     this._plot = plot;
@@ -245,14 +232,14 @@ export class EventMarkers {
     return this._events;
   }
 
-  setTypes(types: any) {
+  setTypes(types) {
     return (this._types = types);
   }
 
   /**
    * create internal objects for the given events
    */
-  setupEvents(events: any[]) {
+  setupEvents(events) {
     const parts = _.partition(events, 'isRegion');
     const regions = parts[0];
     events = parts[1];
@@ -267,7 +254,7 @@ export class EventMarkers {
       this._events.push(vre);
     });
 
-    this._events.sort((a: any, b: any) => {
+    this._events.sort((a, b) => {
       const ao = a.getOptions(),
         bo = b.getOptions();
       if (ao.min > bo.min) {
@@ -287,11 +274,8 @@ export class EventMarkers {
     // var o = this._plot.getPlotOffset();
 
     $.each(this._events, (index, event) => {
-      const options = event.getOptions();
-      const insidePlot = this._insidePlot(options.min) || this._insidePlot(options.timeEnd);
-      const overlapPlot = this._overlapPlot(options.min, options.timeEnd);
       // check event is inside the graph range
-      if ((insidePlot || overlapPlot) && !event.isHidden()) {
+      if (this._insidePlot(event.getOptions().min) && !event.isHidden()) {
         event.visual().draw();
       } else {
         event
@@ -331,7 +315,7 @@ export class EventMarkers {
   /**
    * create a DOM element for the given event
    */
-  _buildDiv(event: { eventType: any; min: any; editModel: any }) {
+  _buildDiv(event) {
     const that = this;
 
     const container = this._plot.getPlaceholder();
@@ -456,13 +440,13 @@ export class EventMarkers {
 
     const drawableEvent = new DrawableEvent(
       line,
-      function drawFunc(obj: { show: () => void }) {
+      function drawFunc(obj) {
         obj.show();
       },
-      (obj: { remove: () => void }) => {
+      obj => {
         obj.remove();
       },
-      (obj: any, position: { top: any; left: any }) => {
+      (obj, position) => {
         obj.css({
           top: position.top,
           left: position.left,
@@ -480,19 +464,13 @@ export class EventMarkers {
   /**
    * create a DOM element for the given region
    */
-  _buildRegDiv(event: { eventType: any; min: number; timeEnd: number; editModel: any }) {
+  _buildRegDiv(event) {
     const that = this;
 
     const container = this._plot.getPlaceholder();
     const o = this._plot.getPlotOffset();
     const xaxis = this._plot.getXAxes()[this._plot.getOptions().events.xaxis - 1];
-    let top,
-      left,
-      lineWidth: number,
-      regionWidth,
-      lineStyle: string | number | cssPropertySetter,
-      color: string,
-      markerTooltip;
+    let top, left, lineWidth, regionWidth, lineStyle, color, markerTooltip;
 
     // map the eventType to a types object
     const eventTypeId = event.eventType;
@@ -528,38 +506,30 @@ export class EventMarkers {
     const timeTo = Math.max(event.min, event.timeEnd);
     left = xaxis.p2c(timeFrom) + o.left;
     const right = xaxis.p2c(timeTo) + o.left;
-
-    const [xmin, xmax] = [o.left, o.left + this._plot.width()];
-    const regionStart = Math.max(left, xmin);
-    const regionEnd = Math.min(right, xmax);
-    const regionOffset = right > xmax ? 0 : lineWidth; // only include lineWidth when right line is visible
-    regionWidth = regionEnd - regionStart + regionOffset;
+    regionWidth = right - left;
 
     _.each([left, right], position => {
-      // only draw visible region lines
-      if (xmin <= position && position < xmax) {
-        const line = $('<div class="events_line flot-temp-elem"></div>').css({
-          position: 'absolute',
-          opacity: 0.8,
-          left: position + 'px',
-          top: 8,
-          width: lineWidth + 'px',
-          height: this._plot.height() + topOffset,
-          'border-left-width': lineWidth + 'px',
-          'border-left-style': lineStyle,
-          'border-left-color': color,
-          color: color,
-        });
-        line.appendTo(container);
-      }
+      const line = $('<div class="events_line flot-temp-elem"></div>').css({
+        position: 'absolute',
+        opacity: 0.8,
+        left: position + 'px',
+        top: 8,
+        width: lineWidth + 'px',
+        height: this._plot.height() + topOffset,
+        'border-left-width': lineWidth + 'px',
+        'border-left-style': lineStyle,
+        'border-left-color': color,
+        color: color,
+      });
+      line.appendTo(container);
     });
 
     const region = $('<div class="events_marker region_marker flot-temp-elem"></div>').css({
       position: 'absolute',
       opacity: 0.5,
-      left: regionStart + 'px',
+      left: left + 'px',
       top: top,
-      width: regionWidth + 'px',
+      width: Math.round(regionWidth + lineWidth) + 'px',
       height: '0.5rem',
       'border-left-color': color,
       color: color,
@@ -590,13 +560,13 @@ export class EventMarkers {
 
     const drawableEvent = new DrawableEvent(
       region,
-      function drawFunc(obj: { show: () => void }) {
+      function drawFunc(obj) {
         obj.show();
       },
-      (obj: { remove: () => void }) => {
+      obj => {
         obj.remove();
       },
-      (obj: { css: (arg0: { top: any; left: any }) => void }, position: { top: any; left: any }) => {
+      (obj, position) => {
         obj.css({
           top: position.top,
           left: position.left,
@@ -614,20 +584,10 @@ export class EventMarkers {
   /**
    * check if the event is inside visible range
    */
-  _insidePlot(x: any) {
+  _insidePlot(x) {
     const xaxis = this._plot.getXAxes()[this._plot.getOptions().events.xaxis - 1];
     const xc = xaxis.p2c(x);
     return xc > 0 && xc < xaxis.p2c(xaxis.max);
-  }
-
-  /**
-   * check if the event overlaps the visible range
-   */
-  _overlapPlot(point0: number, point1: number) {
-    const xaxis = this._plot.getXAxes()[this._plot.getOptions().events.xaxis - 1];
-    const [coord0, coord1] = [xaxis.p2c(point0), xaxis.p2c(point1)];
-    const [coordMin, coordMax] = [0, xaxis.p2c(xaxis.max)];
-    return coordMin < coord0 && coord1 < coordMax;
   }
 }
 
@@ -636,7 +596,8 @@ export class EventMarkers {
  */
 
 /** @ngInject */
-export function init(this: any, plot: any) {
+export function init(this: any, plot) {
+  /*jshint validthis:true */
   const that = this;
   const eventMarkers = new EventMarkers(plot);
 
@@ -663,20 +624,20 @@ export function init(this: any, plot: any) {
   };
 
   // change events on an existing plot
-  plot.setEvents = (events: any[]) => {
+  plot.setEvents = events => {
     if (eventMarkers.eventsEnabled) {
       eventMarkers.setupEvents(events);
     }
   };
 
-  plot.hooks.processOptions.push((plot: any, options: any) => {
+  plot.hooks.processOptions.push((plot, options) => {
     // enable the plugin
     if (options.events.data != null) {
       eventMarkers.eventsEnabled = true;
     }
   });
 
-  plot.hooks.draw.push((plot: any) => {
+  plot.hooks.draw.push(plot => {
     const options = plot.getOptions();
 
     if (eventMarkers.eventsEnabled) {
@@ -693,7 +654,7 @@ export function init(this: any, plot: any) {
   });
 }
 
-const defaultOptions: any = {
+const defaultOptions = {
   events: {
     data: null,
     types: null,

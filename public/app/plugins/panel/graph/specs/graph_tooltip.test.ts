@@ -13,7 +13,7 @@ const elem = $('<div></div>');
 const dashboard = {};
 const getSeriesFn = () => {};
 
-function describeSharedTooltip(desc: string, fn: any) {
+function describeSharedTooltip(desc, fn) {
   const ctx: any = {};
   ctx.ctrl = scope.ctrl;
   ctx.ctrl.panel = {
@@ -24,14 +24,13 @@ function describeSharedTooltip(desc: string, fn: any) {
     stack: false,
   };
 
-  ctx.setup = (setupFn: any) => {
+  ctx.setup = setupFn => {
     ctx.setupFn = setupFn;
   };
 
   describe(desc, () => {
     beforeEach(() => {
       ctx.setupFn();
-      // @ts-ignore
       const tooltip = new GraphTooltip(elem, dashboard, scope, getSeriesFn);
       ctx.results = tooltip.getMultiSeriesPlotHoverInfo(ctx.data, ctx.pos);
     });
@@ -41,19 +40,9 @@ function describeSharedTooltip(desc: string, fn: any) {
 }
 
 describe('findHoverIndexFromData', () => {
-  // @ts-ignore
   const tooltip = new GraphTooltip(elem, dashboard, scope, getSeriesFn);
   const series = {
-    data: [
-      [100, 0],
-      [101, 0],
-      [102, 0],
-      [103, 0],
-      [104, 0],
-      [105, 0],
-      [106, 0],
-      [107, 0],
-    ],
+    data: [[100, 0], [101, 0], [102, 0], [103, 0], [104, 0], [105, 0], [106, 0], [107, 0]],
   };
 
   it('should return 0 if posX out of lower bounds', () => {
@@ -77,25 +66,11 @@ describe('findHoverIndexFromData', () => {
   });
 });
 
-describeSharedTooltip('steppedLine false, stack false', (ctx: any) => {
+describeSharedTooltip('steppedLine false, stack false', ctx => {
   ctx.setup(() => {
     ctx.data = [
-      {
-        data: [
-          [10, 15],
-          [12, 20],
-        ],
-        lines: {},
-        hideTooltip: false,
-      },
-      {
-        data: [
-          [10, 2],
-          [12, 3],
-        ],
-        lines: {},
-        hideTooltip: false,
-      },
+      { data: [[10, 15], [12, 20]], lines: {}, hideTooltip: false },
+      { data: [[10, 2], [12, 3]], lines: {}, hideTooltip: false },
     ];
     ctx.pos = { x: 11 };
   });
@@ -115,52 +90,32 @@ describeSharedTooltip('steppedLine false, stack false', (ctx: any) => {
   });
 });
 
-describeSharedTooltip('one series is hidden', (ctx: any) => {
+describeSharedTooltip('one series is hidden', ctx => {
   ctx.setup(() => {
-    ctx.data = [
-      {
-        data: [
-          [10, 15],
-          [12, 20],
-        ],
-      },
-      { data: [] },
-    ];
+    ctx.data = [{ data: [[10, 15], [12, 20]] }, { data: [] }];
     ctx.pos = { x: 11 };
   });
 });
 
-describeSharedTooltip('steppedLine false, stack true, individual false', (ctx: any) => {
+describeSharedTooltip('steppedLine false, stack true, individual false', ctx => {
   ctx.setup(() => {
     ctx.data = [
       {
-        data: [
-          [10, 15],
-          [12, 20],
-        ],
+        data: [[10, 15], [12, 20]],
         lines: {},
         datapoints: {
           pointsize: 2,
-          points: [
-            [10, 15],
-            [12, 20],
-          ],
+          points: [[10, 15], [12, 20]],
         },
         stack: true,
         hideTooltip: false,
       },
       {
-        data: [
-          [10, 2],
-          [12, 3],
-        ],
+        data: [[10, 2], [12, 3]],
         lines: {},
         datapoints: {
           pointsize: 2,
-          points: [
-            [10, 2],
-            [12, 3],
-          ],
+          points: [[10, 2], [12, 3]],
         },
         stack: true,
         hideTooltip: false,
@@ -175,37 +130,25 @@ describeSharedTooltip('steppedLine false, stack true, individual false', (ctx: a
   });
 });
 
-describeSharedTooltip('steppedLine false, stack true, individual false, series stack false', (ctx: any) => {
+describeSharedTooltip('steppedLine false, stack true, individual false, series stack false', ctx => {
   ctx.setup(() => {
     ctx.data = [
       {
-        data: [
-          [10, 15],
-          [12, 20],
-        ],
+        data: [[10, 15], [12, 20]],
         lines: {},
         datapoints: {
           pointsize: 2,
-          points: [
-            [10, 15],
-            [12, 20],
-          ],
+          points: [[10, 15], [12, 20]],
         },
         stack: true,
         hideTooltip: false,
       },
       {
-        data: [
-          [10, 2],
-          [12, 3],
-        ],
+        data: [[10, 2], [12, 3]],
         lines: {},
         datapoints: {
           pointsize: 2,
-          points: [
-            [10, 2],
-            [12, 3],
-          ],
+          points: [[10, 2], [12, 3]],
         },
         stack: false,
         hideTooltip: false,
@@ -220,37 +163,25 @@ describeSharedTooltip('steppedLine false, stack true, individual false, series s
   });
 });
 
-describeSharedTooltip('steppedLine false, stack true, individual true', (ctx: any) => {
+describeSharedTooltip('steppedLine false, stack true, individual true', ctx => {
   ctx.setup(() => {
     ctx.data = [
       {
-        data: [
-          [10, 15],
-          [12, 20],
-        ],
+        data: [[10, 15], [12, 20]],
         lines: {},
         datapoints: {
           pointsize: 2,
-          points: [
-            [10, 15],
-            [12, 20],
-          ],
+          points: [[10, 15], [12, 20]],
         },
         stack: true,
         hideTooltip: false,
       },
       {
-        data: [
-          [10, 2],
-          [12, 3],
-        ],
+        data: [[10, 2], [12, 3]],
         lines: {},
         datapoints: {
           pointsize: 2,
-          points: [
-            [10, 2],
-            [12, 3],
-          ],
+          points: [[10, 2], [12, 3]],
         },
         stack: false,
         hideTooltip: false,

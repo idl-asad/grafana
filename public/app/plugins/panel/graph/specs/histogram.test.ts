@@ -2,7 +2,7 @@ import { convertValuesToHistogram, getSeriesValues } from '../histogram';
 
 describe('Graph Histogam Converter', () => {
   describe('Values to histogram converter', () => {
-    let values: any;
+    let values;
     let bucketSize = 10;
 
     beforeEach(() => {
@@ -11,11 +11,7 @@ describe('Graph Histogam Converter', () => {
 
     it('Should convert to series-like array', () => {
       bucketSize = 10;
-      const expected = [
-        [0, 2],
-        [10, 3],
-        [20, 2],
-      ];
+      const expected = [[0, 2], [10, 3], [20, 2]];
 
       const histogram = convertValuesToHistogram(values, bucketSize, 1, 29);
       expect(histogram).toMatchObject(expected);
@@ -23,14 +19,7 @@ describe('Graph Histogam Converter', () => {
 
     it('Should not add empty buckets', () => {
       bucketSize = 5;
-      const expected = [
-        [0, 2],
-        [5, 0],
-        [10, 2],
-        [15, 1],
-        [20, 1],
-        [25, 1],
-      ];
+      const expected = [[0, 2], [5, 0], [10, 2], [15, 1], [20, 1], [25, 1]];
 
       const histogram = convertValuesToHistogram(values, bucketSize, 1, 29);
       expect(histogram).toMatchObject(expected);
@@ -38,20 +27,12 @@ describe('Graph Histogam Converter', () => {
   });
 
   describe('Series to values converter', () => {
-    let data: any;
+    let data;
 
     beforeEach(() => {
       data = [
         {
-          datapoints: [
-            [1, 0],
-            [2, 0],
-            [10, 0],
-            [11, 0],
-            [17, 0],
-            [20, 0],
-            [29, 0],
-          ],
+          datapoints: [[1, 0], [2, 0], [10, 0], [11, 0], [17, 0], [20, 0], [29, 0]],
         },
       ];
     });

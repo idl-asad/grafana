@@ -1,25 +1,24 @@
 import _ from 'lodash';
 import React, { PureComponent } from 'react';
 import { TimeSeries } from 'app/core/core';
-import { CustomScrollbar, Icon } from '@grafana/ui';
+import { CustomScrollbar } from '@grafana/ui';
 import { LegendItem, LEGEND_STATS } from './LegendSeriesItem';
 
-type Sort = 'min' | 'max' | 'avg' | 'current' | 'total';
 interface LegendProps {
   seriesList: TimeSeries[];
   optionalClass?: string;
 }
 
 interface LegendEventHandlers {
-  onToggleSeries?: (hiddenSeries: any) => void;
-  onToggleSort?: (sortBy: any, sortDesc: any) => void;
+  onToggleSeries?: (hiddenSeries) => void;
+  onToggleSort?: (sortBy, sortDesc) => void;
   onToggleAxis?: (series: TimeSeries) => void;
   onColorChange?: (series: TimeSeries, color: string) => void;
 }
 
 interface LegendComponentEventHandlers {
-  onToggleSeries?: (series: TimeSeries, event: any) => void;
-  onToggleSort?: (sortBy: Sort | undefined, sortDesc: any) => void;
+  onToggleSeries?: (series, event) => void;
+  onToggleSort?: (sortBy, sortDesc) => void;
   onToggleAxis?: (series: TimeSeries) => void;
   onColorChange?: (series: TimeSeries, color: string) => void;
 }
@@ -43,7 +42,7 @@ interface LegendValuesProps {
 }
 
 interface LegendSortProps {
-  sort?: Sort;
+  sort?: 'min' | 'max' | 'avg' | 'current' | 'total';
   sortDesc?: boolean;
 }
 
@@ -81,7 +80,7 @@ export class GraphLegend extends PureComponent<GraphLegendProps, LegendState> {
     onColorChange: () => {},
   };
 
-  constructor(props: GraphLegendProps) {
+  constructor(props) {
     super(props);
     this.state = {
       hiddenSeries: this.props.hiddenSeries,
@@ -90,10 +89,9 @@ export class GraphLegend extends PureComponent<GraphLegendProps, LegendState> {
 
   sortLegend() {
     let seriesList: TimeSeries[] = [...this.props.seriesList] || [];
-    const sortBy = this.props.sort;
-    if (sortBy && this.props[sortBy] && this.props.alignAsTable) {
+    if (this.props.sort) {
       seriesList = _.sortBy(seriesList, series => {
-        let sort = series.stats[sortBy];
+        let sort = series.stats[this.props.sort];
         if (sort === null) {
           sort = -Infinity;
         }
@@ -106,11 +104,7 @@ export class GraphLegend extends PureComponent<GraphLegendProps, LegendState> {
     return seriesList;
   }
 
-  onToggleSeries = (series: TimeSeries, event: any) => {
-    if (!this.props.onToggleSeries) {
-      return;
-    }
-
+  onToggleSeries = (series, event) => {
     let hiddenSeries = { ...this.state.hiddenSeries };
     if (event.ctrlKey || event.metaKey || event.shiftKey) {
       if (hiddenSeries[series.alias]) {
@@ -125,7 +119,7 @@ export class GraphLegend extends PureComponent<GraphLegendProps, LegendState> {
     this.props.onToggleSeries(hiddenSeries);
   };
 
-  toggleSeriesExclusiveMode(series: TimeSeries) {
+  toggleSeriesExclusiveMode(series) {
     const hiddenSeries = { ...this.state.hiddenSeries };
 
     if (hiddenSeries[series.alias]) {
@@ -232,21 +226,17 @@ class LegendSeriesList extends PureComponent<LegendComponentProps> {
 }
 
 class LegendTable extends PureComponent<Partial<LegendComponentProps>> {
-  onToggleSort = (stat: Sort) => {
-    if (!this.props.onToggleSort) {
-      return;
-    }
-
+  onToggleSort = stat => {
     let sortDesc = this.props.sortDesc;
     let sortBy = this.props.sort;
     if (stat !== sortBy) {
-      sortDesc = undefined;
+      sortDesc = null;
     }
 
     // if already sort ascending, disable sorting
     if (sortDesc === false) {
-      sortBy = undefined;
-      sortDesc = undefined;
+      sortBy = null;
+      sortDesc = null;
     } else {
       sortDesc = !sortDesc;
       sortBy = stat;
@@ -257,12 +247,7 @@ class LegendTable extends PureComponent<Partial<LegendComponentProps>> {
   render() {
     const seriesList = this.props.seriesList;
     const { values, min, max, avg, current, total, sort, sortDesc, hiddenSeries } = this.props;
-    const seriesValuesProps: any = { values, min, max, avg, current, total };
-
-    if (!seriesList) {
-      return null;
-    }
-
+    const seriesValuesProps = { values, min, max, avg, current, total };
     return (
       <table>
         <colgroup>
@@ -310,18 +295,14 @@ interface LegendTableHeaderProps {
 }
 
 class LegendTableHeaderItem extends PureComponent<LegendTableHeaderProps & LegendSortProps> {
-  onClick = () => {
-    if (this.props.onClick) {
-      this.props.onClick(this.props.statName);
-    }
-  };
+  onClick = () => this.props.onClick(this.props.statName);
 
   render() {
     const { statName, sort, sortDesc } = this.props;
     return (
       <th className="pointer" onClick={this.onClick}>
         {statName}
-        {sort === statName && <Icon name={sortDesc ? 'angle-down' : 'angle-up'} />}
+        {sort === statName && <span className={sortDesc ? 'fa fa-caret-down' : 'fa fa-caret-up'} />}
       </th>
     );
   }
