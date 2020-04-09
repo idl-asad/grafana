@@ -33,10 +33,12 @@ const (
 
 	WeightCreate = (iota - 20) * 100
 	WeightDashboard
+	WeightConfigApp
 	WeightExplore
 	WeightProfile
 	WeightAlerting
 	WeightPlugin
+	WeightDocs
 	WeightConfig
 	WeightAdmin
 	WeightHelp

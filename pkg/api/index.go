@@ -146,24 +146,14 @@ func (hs *HTTPServer) setIndexViewData(c *models.ReqContext) (*dtos.IndexViewDat
 		Children:   dashboardChildNavs,
 	})
 
-	if setting.ExploreEnabled && (c.OrgRole == models.ROLE_ADMIN || c.OrgRole == models.ROLE_EDITOR || setting.ViewersCanEdit) {
-		data.NavTree = append(data.NavTree, &dtos.NavLink{
-			Text:       "Explore",
-			Id:         "explore",
-			SubTitle:   "Explore your data",
-			Icon:       "gicon gicon-explore",
-			SortWeight: dtos.WeightExplore,
-			Url:        setting.AppSubUrl + "/explore",
-		})
-	}
-
 	// Custom-Clientbook
 	if c.OrgRole == models.ROLE_ADMIN || c.OrgRole == models.ROLE_EDITOR {
 		data.NavTree = append(data.NavTree, &dtos.NavLink{
-			Text:     "Configuration",
-			Id:       "cb",
-			SubTitle: "Set up Data Pipeline",
-			Icon:     "fa fa-sitemap",
+			Text:       "Configuration",
+			Id:         "cb",
+			SubTitle:   "Set up Data Pipeline",
+			Icon:       "fa fa-sitemap",
+			SortWeight: dtos.WeightConfigApp,
 			Children: []*dtos.NavLink{
 				{
 					Text:     "Datasources",
@@ -184,6 +174,17 @@ func (hs *HTTPServer) setIndexViewData(c *models.ReqContext) (*dtos.IndexViewDat
 					Redirect: true,
 				},
 			},
+		})
+	}
+
+	if setting.ExploreEnabled && (c.OrgRole == models.ROLE_ADMIN || c.OrgRole == models.ROLE_EDITOR || setting.ViewersCanEdit) {
+		data.NavTree = append(data.NavTree, &dtos.NavLink{
+			Text:       "Explore",
+			Id:         "explore",
+			SubTitle:   "Explore your data",
+			Icon:       "gicon gicon-explore",
+			SortWeight: dtos.WeightExplore,
+			Url:        setting.AppSubUrl + "/explore",
 		})
 	}
 
@@ -239,14 +240,15 @@ func (hs *HTTPServer) setIndexViewData(c *models.ReqContext) (*dtos.IndexViewDat
 		})
 	}
 
-	if c.OrgRole == m.ROLE_ADMIN || c.OrgRole == m.ROLE_EDITOR {
+	if c.OrgRole == models.ROLE_ADMIN || c.OrgRole == models.ROLE_EDITOR {
 		data.NavTree = append(data.NavTree, &dtos.NavLink{
-			Text:     "Documentation",
-			Id:       "cb",
-			SubTitle: "Set up Data Pipeline",
-			Icon:     "fa fa-file",
-			Url:      setting.CbDocumentationUrl,
-			Redirect: true,
+			Text:       "Documentation",
+			Id:         "cb",
+			SubTitle:   "Set up Data Pipeline",
+			Icon:       "fa fa-file",
+			Url:        setting.CbDocumentationUrl,
+			SortWeight: dtos.WeightDocs,
+			Redirect:   true,
 		})
 	}
 

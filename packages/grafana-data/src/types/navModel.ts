@@ -8,6 +8,7 @@ export interface NavModelItem {
   active?: boolean;
   hideFromTabs?: boolean;
   hideFromMenu?: boolean;
+  redirect?: boolean;
   divider?: boolean;
   children?: NavModelItem[];
   breadcrumbs?: NavModelBreadcrumb[];

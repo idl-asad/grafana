@@ -2,7 +2,7 @@
   "links": [],
   "panels": [
     {
-      "content": "<div class=\"dashboard-header\">\n  <span>Welcome to Grafana</span>\n</div>",
+      "content": "<div class=\"dashboard-header\">\n  <span>Welcome to clientbook</span>\n</div>",
       "datasource": null,
       "editable": true,
       "gridPos": {
