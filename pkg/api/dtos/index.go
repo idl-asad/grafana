@@ -35,6 +35,8 @@ const (
 	WeightDashboard
 	WeightExplore
 	WeightProfile
+	WeightConfiguration
+	WeightDocumentation
 	WeightAlerting
 	WeightPlugin
 	WeightConfig

@@ -158,16 +158,17 @@ func (hs *HTTPServer) setIndexViewData(c *models.ReqContext) (*dtos.IndexViewDat
 	}
 
 	// Custom-Clientbook
-	if (c.OrgRole == m.ROLE_ADMIN || c.OrgRole == m.ROLE_EDITOR) && setting.ConfigBaseUrl != "" {
+	if (c.OrgRole == models.ROLE_ADMIN || c.OrgRole == models.ROLE_EDITOR) && setting.ConfigBaseUrl != "" {
 		data.NavTree = append(data.NavTree, &dtos.NavLink{
 			Text:     "Configuration",
 			Id:       "cb",
 			SubTitle: "Set up Data Pipeline",
 			Icon:     "fa fa-sitemap",
+			SortWeight: dtos.WeightConfiguration,
 			Children: []*dtos.NavLink{
 				{
 					Text:     "Datasources",
-					Icon:     "gicon gicon-datasources",
+					Icon:     "database",
 					Url:      setting.ConfigBaseUrl + "/datasources",
 					Redirect: true,
 				},
@@ -239,13 +240,14 @@ func (hs *HTTPServer) setIndexViewData(c *models.ReqContext) (*dtos.IndexViewDat
 		})
 	}
 
-	if (c.OrgRole == m.ROLE_ADMIN || c.OrgRole == m.ROLE_EDITOR) && setting.CbDocumentationUrl != "" {
+	if (c.OrgRole == models.ROLE_ADMIN || c.OrgRole == models.ROLE_EDITOR) && setting.CbDocumentationUrl != "" {
 		data.NavTree = append(data.NavTree, &dtos.NavLink{
 			Text:     "Documentation",
 			Id:       "cb",
 			SubTitle: "Set up Data Pipeline",
 			Icon:     "fa fa-file",
 			Url:      setting.CbDocumentationUrl,
+			SortWeight: dtos.WeightDocumentation,
 			Redirect: true,
 		})
 	}

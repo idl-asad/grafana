@@ -2,15 +2,12 @@ import React, { PureComponent } from 'react';
 import appEvents from '../../app_events';
 import TopSection from './TopSection';
 import BottomSection from './BottomSection';
-<<<<<<< HEAD
 import config from 'app/core/config';
 import { CoreEvents } from 'app/types';
 import { Branding } from 'app/core/components/Branding/Branding';
 import { Icon } from '@grafana/ui';
 
 const homeUrl = config.appSubUrl || '/';
-=======
->>>>>>> d32f686... config app and documentation side menu link hidden for lite deployment
 
 export class SideMenu extends PureComponent {
   toggleSideMenuSmallBreakpoint = () => {
